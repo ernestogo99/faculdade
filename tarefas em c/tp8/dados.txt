@@ -1,0 +1,8 @@
+2324 Joao 11 99998888 joao@email.com P
+2122 Julia 91 88889999 rafael@email.com P
+5678 Lucas 21 98765432 mariana@email.com C
+5678 Manga 21 98765432 mariana@email.com C
+1234 Maria 11 99998887 jonas@email.com P
+1234 Mariana 11 99998887 jonas@email.com P
+1234 Mateus 11 99998887 jonas@email.com P
+1234 Pedro 11 99998887 jonas@email.com P
