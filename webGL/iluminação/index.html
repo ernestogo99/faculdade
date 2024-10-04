@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <script src="../math.js"></script>
+  <script src="ilu.js"></script>
+  <script id="vertex-shader" type="notjs">
+    attribute vec4 position;
+    attribute vec2 texCoord;
+    attribute vec3 normal;
+
+    varying vec2 v_textCoord;
+    varying vec3 v_normal;
+
+    uniform mat4 transfproj;
+    uniform mat4 transf;
+
+    void main() {
+      v_normal = (transf * vec4(normal, 0.0)).xyz; // Transforma o normal corretamente
+      gl_Position = transfproj * position; // Transforma a posição do vértice
+      v_textCoord = texCoord; // Transfere as coordenadas da textura
+    }
+  </script>
+  <script id="frag-shader" type="notjs">
+    precision mediump float;
+
+    varying vec2 v_textCoord;
+    varying vec3 v_normal;
+
+    uniform sampler2D tex;
+    uniform vec3 lightDirection;
+    uniform vec3 lightColor;
+
+    void main() {
+      vec3 v_normal_n = normalize(v_normal);
+      vec3 lightDirection_n = normalize(-lightDirection);
+
+      float light = dot(lightDirection_n, v_normal_n); // Calcula a intensidade da luz
+      if (light < 0.0) light = 0.0; // Garante que a luz não seja negativa
+
+      vec4 texColor = texture2D(tex, v_textCoord); // Obtém a cor da textura
+      gl_FragColor =vec4(lightColor * texColor.rgb * light, texColor.a); // Aplica a iluminação na cor da textura
+    }
+  </script>
+  <body onload="init()">
+    <canvas id="glcanvas" width="400" height="300"></canvas>
+  </body>
+</html>

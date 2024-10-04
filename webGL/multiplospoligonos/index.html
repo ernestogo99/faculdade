@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <script src="multiplosPoligonos.js"></script>
+  <script id="vertex-shader" type="notjs">
+    attribute vec4 position;
+    attribute vec4 color;
+    varying vec4 vColor;
+    void main() {
+      gl_Position = position;
+      vColor = color;
+    }
+  </script>
+  <script id="frag-shader" type="notjs">
+    precision mediump float;
+    varying vec4 vColor;
+    void main() {
+      gl_FragColor = vColor;
+    }
+  </script>
+  <body onload="init()">
+    <canvas id="glcanvas" width="400" height="300"></canvas>
+  </body>
+</html>

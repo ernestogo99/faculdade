@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <script src="../math.js"></script>
+  <script src="ilup.js"></script>
+  <script id="vertex-shader" type="notjs">
+    attribute vec4 position;
+    attribute vec2 texCoord;
+    attribute vec3 normal;
+
+    varying vec2 v_textCoord;
+    varying vec3 v_normal;
+    varying vec3 pointToLight;
+
+    uniform mat4 transfproj;
+    uniform mat4 transf;
+    uniform vec3 lightpos;
+
+    uniform vec3 campos;
+    varying vec3 pointToCam;
+
+    void main() {
+      pointToLight = lightpos - position.xyz;
+      pointToCam = campos - position.xyz;
+      v_normal = (transf * vec4(normal, 0.0)).xyz; // Transforma o normal corretamente
+      gl_Position = transfproj * position; // Transforma a posição do vértice
+      v_textCoord = texCoord; // Transfere as coordenadas da textura
+    }
+  </script>
+  <script id="frag-shader" type="notjs">
+    precision mediump float;
+
+    varying vec2 v_textCoord;
+    varying vec3 v_normal;
+    varying vec3 pointToLight;
+    varying vec3 pointToCam;
+
+    uniform sampler2D tex;
+    uniform vec3 lightDirection;
+    uniform vec3 lightColor;
+
+    void main() {
+      vec3 pTolight = normalize(pointToLight);
+      vec3 pToCam = normalize(pointToCam);
+
+      vec3 halfVec = normalize(pToCam + pTolight);
+
+      vec3 v_normal_n = normalize(v_normal);
+      vec3 lightDirection_n = normalize(-lightDirection);
+
+      float lightd = dot(v_normal_n, lightDirection_n); // Calcula a intensidade da luz
+      float lightp = dot(v_normal_n, pTolight);
+      float lighte = dot(v_normal_n, halfVec);
+
+      if (lightd < 0.0) lightd = 0.0;
+      if (lightp < 0.0) lightp = 0.0; // Garante que a luz não seja negativa
+      if (lighte < 0.0) lighte = 0.0;
+
+      vec3 texColor = texture2D(tex, v_textCoord).rgb; // Obtém a cor da textura
+
+      gl_FragColor.rgb = 0.2 * lightColor * texColor;
+      gl_FragColor.rgb += 0.2 * lightColor * texColor * lightd;
+      gl_FragColor.rgb += 0.5 * lightColor * texColor * lightp; // Aplica a iluminação na cor da textura
+      gl_FragColor.rgb += lightColor * pow(lighte, 300.0) * texColor;
+      gl_FragColor.a = texture2D(tex, v_textCoord).a;
+    }
+  </script>
+  <body onload="init()">
+    <canvas id="glcanvas" width="640" height="640"></canvas>
+  </body>
+</html>

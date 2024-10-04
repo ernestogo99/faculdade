@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <script src="../math.js"></script>
+  <script src="camera.js"></script>
+  <script id="vertex-shader" type="notjs">
+    attribute vec4 position;
+    attribute vec2 texCoord;
+    varying vec2 v_textCoord;
+    uniform mat4 transf;
+
+
+    void main() {
+      gl_Position = transf *position;
+      v_textCoord = texCoord;
+
+
+    }
+  </script>
+  <script id="frag-shader" type="notjs">
+    precision mediump float;
+
+    varying vec2 v_textCoord;
+
+    uniform sampler2D tex;
+
+    void main() {
+      gl_FragColor = texture2D(tex,v_textCoord);
+    }
+  </script>
+  <body onload="init()">
+    <canvas id="glcanvas" width="400" height="300"></canvas>
+  </body>
+</html>
